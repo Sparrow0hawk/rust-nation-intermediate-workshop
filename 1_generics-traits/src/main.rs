@@ -28,9 +28,17 @@ trait MyIterator {
         }
     }
 
-    // fn my_sum(mut self) -> i32 {
-    //     todo!()
-    // }
+    fn my_sum(mut self) -> i32
+    where
+        Self: MyIterator<Item = i32>,
+        Self: Sized,
+    {
+        let mut sum = 0;
+        while let Some(value) = self.next() {
+            sum += value;
+        }
+        sum
+    }
 }
 
 impl<T> MyIterator for Vec<T> {
@@ -108,8 +116,8 @@ fn main() {
         .my_map(|item| format!("Value: {}", item));
     print_iterator(mapped);
 
-    // let total = enumeration.clone().my_sum();
-    // println!("Total: {}", total);
+    let total = enumeration.clone().my_sum();
+    println!("Total: {}", total);
 
     // let filtered_mapped_total = enumeration.clone()
     //     .my_filter(|&item| item % 2 == 0)
