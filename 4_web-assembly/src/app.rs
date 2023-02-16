@@ -1,4 +1,4 @@
-use crate::components::todoList::{Mode, Todo, TodoList};
+use crate::components::todoList::{Mode, NewTodo, Todo, TodoList};
 use yew::prelude::*;
 
 #[function_component(App)]
@@ -10,12 +10,24 @@ pub fn app() -> Html {
             Todo::new("TODO 100---01", Mode::Editing),
         ]
     });
+
+    let submit_todo = {
+        let todos = todos.clone();
+        Callback::from(move |label: String| {
+            let mut new_todos = (*todos).clone();
+
+            new_todos.push(Todo::new(&label, Mode::New));
+
+            todos.set(new_todos)
+        })
+    };
+
     html! {
         <div class="todomvc-wrapper">
             <section class="todoapp">
                 <header class="header">
                     <h1>{"todos"}</h1>
-                    <input class="new-todo" placeholder="What needs to be done?" />
+                    <NewTodo on_todo_entered={submit_todo} />
                 </header>
                 <section class="main">
                     <input id="toggle-all" class="toggle-all" type="checkbox" />

@@ -1,4 +1,7 @@
+use web_sys::HtmlInputElement;
 use yew::prelude::*;
+
+use self::_NewTodoProps::on_todo_entered;
 
 #[derive(PartialEq, Clone)]
 pub enum Mode {
@@ -64,5 +67,27 @@ fn todo_item(props: &TodoItemProps) -> Html {
         <input class="edit" type="text" value={props.todo.label.clone()}
             hidden={!matches!(props.todo.mode, Mode::Editing)}/>
     </li>
+    )
+}
+
+#[derive(Properties, PartialEq)]
+pub struct NewTodoProps {
+    pub on_todo_entered: Callback<String>,
+}
+
+#[function_component(NewTodo)]
+pub fn new_todo(props: &NewTodoProps) -> Html {
+    let on_c = props.on_todo_entered.clone();
+    let onkeypress = Callback::from(move |e: KeyboardEvent| {
+        if e.key() == "Enter" {
+            let input = e.target_unchecked_into::<HtmlInputElement>();
+
+            let value = input.value();
+            on_c.emit(value);
+            input.set_value("");
+        }
+    });
+    html! (
+    <input class="new-todo" placeholder="What needs to be done?" {onkeypress} />
     )
 }
