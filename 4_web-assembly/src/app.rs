@@ -3,11 +3,13 @@ use yew::prelude::*;
 
 #[function_component(App)]
 pub fn app() -> Html {
-    let todos = vec![
-        Todo::new("TODO 2b", Mode::New),
-        Todo::new("TODO 2c", Mode::Complete),
-        Todo::new("TODO 100---01", Mode::Editing),
-    ];
+    let todos = use_state(|| {
+        vec![
+            Todo::new("TODO 2b", Mode::New),
+            Todo::new("TODO 2c", Mode::Complete),
+            Todo::new("TODO 100---01", Mode::Editing),
+        ]
+    });
     html! {
         <div class="todomvc-wrapper">
             <section class="todoapp">
@@ -18,7 +20,7 @@ pub fn app() -> Html {
                 <section class="main">
                     <input id="toggle-all" class="toggle-all" type="checkbox" />
                     <label for="toggle-all" />
-                    <TodoList todos={todos}/>
+                    <TodoList todos={(*todos).clone()}/>
                 </section>
                 <footer class="footer">
                     <span class="todo-count">
