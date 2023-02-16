@@ -56,11 +56,20 @@ impl From<&str> for Json {
     }
 }
 
-impl From<i32> for Json {
-    fn from(value: i32) -> Self {
-        Json::Number(value as f64)
-    }
+macro_rules! impl_from_for_numbers {
+    ($ ($type:ty ),+ ) => {
+        $(
+            impl From<$type> for Json {
+                fn from(value: $type) -> Self {
+                    Json::Number(value as f64)
+                }
+            }
+        )+
+
+    };
 }
+
+impl_from_for_numbers!(u8, u16, u32, u64, u128, usize, i8, i16, i32, i64, i128, isize, f32, f64);
 
 #[cfg(test)]
 mod tests {
@@ -136,26 +145,26 @@ mod tests {
         );
     }
 
-    // #[test]
-    // fn parse_a_valid_number() {
-    //     assert_eq!(json!(1), Json::Number(1.0));
-    //     assert_eq!(json!(1u8), Json::Number(1.0));
-    //     assert_eq!(json!(1u16), Json::Number(1.0));
-    //     assert_eq!(json!(1u32), Json::Number(1.0));
-    //     assert_eq!(json!(1u64), Json::Number(1.0));
-    //     assert_eq!(json!(1u128), Json::Number(1.0));
-    //     assert_eq!(json!(1usize), Json::Number(1.0));
-    //     assert_eq!(json!(1i8), Json::Number(1.0));
-    //     assert_eq!(json!(1i16), Json::Number(1.0));
-    //     assert_eq!(json!(1i32), Json::Number(1.0));
-    //     assert_eq!(json!(1i64), Json::Number(1.0));
-    //     assert_eq!(json!(1i128), Json::Number(1.0));
-    //     assert_eq!(json!(1isize), Json::Number(1.0));
-    // }
+    #[test]
+    fn parse_a_valid_number() {
+        assert_eq!(json!(1), Json::Number(1.0));
+        assert_eq!(json!(1u8), Json::Number(1.0));
+        assert_eq!(json!(1u16), Json::Number(1.0));
+        assert_eq!(json!(1u32), Json::Number(1.0));
+        assert_eq!(json!(1u64), Json::Number(1.0));
+        assert_eq!(json!(1u128), Json::Number(1.0));
+        assert_eq!(json!(1usize), Json::Number(1.0));
+        assert_eq!(json!(1i8), Json::Number(1.0));
+        assert_eq!(json!(1i16), Json::Number(1.0));
+        assert_eq!(json!(1i32), Json::Number(1.0));
+        assert_eq!(json!(1i64), Json::Number(1.0));
+        assert_eq!(json!(1i128), Json::Number(1.0));
+        assert_eq!(json!(1isize), Json::Number(1.0));
+    }
 
-    // #[test]
-    // fn parse_a_valid_float() {
-    //     assert_eq!(json!(1.0f32), Json::Number(1.0));
-    //     assert_eq!(json!(1.0f64), Json::Number(1.0));
-    // }
+    #[test]
+    fn parse_a_valid_float() {
+        assert_eq!(json!(1.0f32), Json::Number(1.0));
+        assert_eq!(json!(1.0f64), Json::Number(1.0));
+    }
 }
