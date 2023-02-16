@@ -17,9 +17,16 @@ trait MyIterator {
         }
     }
 
-    // fn my_map(self, mapper: f) -> MyMap {
-    //     MyMap::new(self, f)
-    // }
+    fn my_map<T, F>(self, f: F) -> MyMap<Self, F>
+    where
+        Self: Sized,
+        F: Fn(&Self::Item) -> T,
+    {
+        MyMap {
+            iterator: self,
+            mapper: f,
+        }
+    }
 
     // fn my_sum(mut self) -> i32 {
     //     todo!()
@@ -65,9 +72,23 @@ where
     }
 }
 
+impl<I: MyIterator, F, T> MyIterator for MyMap<I, F>
+where
+    F: Fn(&I::Item) -> T,
+{
+    type Item = T;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        while let Some(value) = self.iterator.next() {
+            return Some((self.mapper)(&value));
+        }
+        None
+    }
+}
+
 fn print_iterator<T: Display>(mut iterator: impl MyIterator<Item = T>) {
     while let Some(i) = iterator.next() {
-        print!("{},", i);
+        print!("{}, ", i);
     }
     println!();
 }
@@ -79,8 +100,10 @@ fn main() {
     let filtered = enumeration.clone().my_filter(|&item| item % 2 == 0);
     print_iterator(filtered);
 
-    // let mapped = enumeration.clone().my_map(|item| format!("Value: {}", item));
-    // print_iterator(mapped);
+    let mapped = enumeration
+        .clone()
+        .my_map(|item| format!("Value: {}", item));
+    print_iterator(mapped);
 
     // let total = enumeration.clone().my_sum();
     // println!("Total: {}", total);
