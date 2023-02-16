@@ -72,6 +72,9 @@ where
     }
 }
 
+// we need to specify 3 types here
+// the iterator type to apply the F function upon
+// a generic type for the output of applying the function
 impl<I: MyIterator, F, T> MyIterator for MyMap<I, F>
 where
     F: Fn(&I::Item) -> T,
