@@ -1,13 +1,13 @@
 use yew::prelude::*;
 
-#[derive(PartialEq)]
+#[derive(PartialEq, Clone)]
 enum Mode {
     New,
     Complete,
     Editing,
 }
 
-#[derive(PartialEq)]
+#[derive(PartialEq, Clone)]
 struct Todo {
     label: String,
     mode: Mode,
@@ -24,15 +24,19 @@ impl Todo {
 
 #[function_component(TodoList)]
 pub fn todo_list() -> Html {
-    let todo = Todo::new("TODO 2b", Mode::New);
-    let todo2 = Todo::new("TODO 2c", Mode::Complete);
-    let todo3 = Todo::new("TODO 100---01", Mode::Editing);
+    let todos = vec![
+        Todo::new("TODO 2b", Mode::New),
+        Todo::new("TODO 2c", Mode::Complete),
+        Todo::new("TODO 100---01", Mode::Editing),
+    ];
 
     html! (
         <ul class="todo-list">
-        <TodoItem todo={todo}/>
-        <TodoItem todo={todo2}/>
-        <TodoItem todo={todo3}/>
+        { for todos.iter().map(|t| {
+            html! {
+                <TodoItem todo={t.clone()} />
+            }
+        })}
     </ul>
     )
 }
